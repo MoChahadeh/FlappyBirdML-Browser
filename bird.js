@@ -19,7 +19,7 @@ class Bird {
 
         this.pos = new Vector2D((20/750)*screenWidth, (160/375)*screenHeight*0.1);
         this.spd = new Vector2D(0, 0);
-        this.acc = new Vector2D(0, (0.5/375)*screenHeight);
+        this.acc = new Vector2D(0, (0.6/375)*screenHeight);
         this.jumpStrength = -(6/375)*this.screenHeight;
 
         this.dead = false;
@@ -33,8 +33,6 @@ class Bird {
         this.img.src = 'imgs/bird.png';
 
         this.pipes = pipes;
-
-        group.push(this);
 
     }
 

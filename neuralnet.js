@@ -69,22 +69,24 @@ class NeuralNet {
         this.h2 = h2;
         this.o = o;
 
+        const range = [-0.5, 0.5]
 
-        this.W1 = new Matrix(h1, i).randomize(-0.5, 0.5);
-        this.b1 = new Matrix(h1, 1).randomize(-0.5, 0.5);
+
+        this.W1 = new Matrix(h1, i).randomize(...range);
+        this.b1 = new Matrix(h1, 1).randomize(...range);
         
         if(h2) {
 
-            this.W2 = new Matrix(h2, h1).randomize(-0.5, 0.5);
-            this.b2 = new Matrix(h2, 1).randomize(-0.5,0.5);
-            this.W3 = new Matrix(o, h2).randomize(-0.5,0.5);
-            this.b3 = new Matrix(o, 1).randomize(-0.5,0.5);
+            this.W2 = new Matrix(h2, h1).randomize(...range);
+            this.b2 = new Matrix(h2, 1).randomize(...range);
+            this.W3 = new Matrix(o, h2).randomize(...range);
+            this.b3 = new Matrix(o, 1).randomize(...range);
 
         }
         else {
 
-            this.W2 = new Matrix(o, h1).randomize(-0.5,0.5);
-            this.b2 = new Matrix(o, 1).randomize(-0.5,0.5);
+            this.W2 = new Matrix(o, h1).randomize(...range);
+            this.b2 = new Matrix(o, 1).randomize(...range);
 
         }
 

@@ -4,12 +4,14 @@ const ctx = canvas.getContext('2d');
 let width, height;
 const POPULATION_SIZE = 40;
 
-const birdsGroup = [];
+let birdsGroup = [];
 let nets = [];
-const pipesGroup = [];
-const dead = new Array(POPULATION_SIZE).fill(false);
+let pipesGroup = [];
+let dead = new Array(POPULATION_SIZE).fill(false);
 let fitness = new Array(POPULATION_SIZE).fill(0);
 let copyBest = 3;
+
+let generation = 1; 
 
 let STARTED = true;
 
@@ -72,8 +74,8 @@ function resetGame() {
     pipesGroup.forEach(pipe => pipe.kill());
 
 
-    birdsGroup.length = [];
-    pipesGroup.length = [];
+    birdsGroup = [];
+    pipesGroup = [];
 
     for(let i = 0; i< 8; i++) {
 
@@ -92,13 +94,26 @@ function resetGame() {
     console.log("maxFitness: ", maximumsList[0], "maximums Length: ", maximumsList.length);
 
     for(let i = 0; i< POPULATION_SIZE; i++) {
-        nets.push(nets[maximumsList[i%copyBest]].clone().mutate(0.05));
+        nets.push(nets[maximumsList[i%copyBest]].clone().mutate(0.1));
         nets.splice(0,1);
     }
 
 
     dead.fill(false);
     fitness.fill(0);
+
+    generation++;
+
+}
+
+function drawLabels() {
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px Arial";
+    ctx.fillText("Generation: " + generation, 10, height-90);
+    ctx.fillText("Alive: " + birdsGroup.filter(bird => !bird.dead).length, 10, height-60);
+    ctx.fillText("Best: " + Math.max(...fitness), 10, height-30);
+
 
 }
 
@@ -128,6 +143,8 @@ function animate() {
     pipesGroup.forEach(pipe => pipe.update());
 
     if(dead.every(d => d === true)) resetGame();
+
+    drawLabels();
 
     setTimeout(animate, 1000/60);
 }
