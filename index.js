@@ -94,7 +94,7 @@ function resetGame() {
     console.log("maxFitness: ", maximumsList[0], "maximums Length: ", maximumsList.length);
 
     for(let i = 0; i< POPULATION_SIZE; i++) {
-        nets.push(nets[maximumsList[i%copyBest]].clone().mutate(0.1));
+        nets.push(nets[maximumsList[i%copyBest]].clone().mutate(0.05));
         nets.splice(0,1);
     }
 

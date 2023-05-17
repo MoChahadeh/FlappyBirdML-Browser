@@ -45,18 +45,78 @@ class Matrix {
 
     }
 
+    populate(arr) {
+            
+        for (let i = 0; i < this.rows; i++) {
+
+            for (let j = 0; j < this.cols; j++) {
+
+                this.data[i][j] = arr[i][j];
+
+            }
+
+        }
+
+        return this;
+    
+    }
+
     mutate(mutationRate) {
 
         for(let i = 0; i < this.rows; i++) {
 
             for (let j = 0; j < this.cols; j++) {
 
-                this.data[i][j] *= 1+((Math.random()* 2 - 1)*mutationRate);
+                this.data[i][j] *= 1+ ((Math.random()*2 - 1) * mutationRate);
 
             }
 
         }
     }
+
+    clone() {
+
+        const clone = new Matrix(this.rows, this.cols);
+
+        clone.populate(this.data);
+
+        return clone;
+
+
+    }
+
+}
+
+function getDims(arr) {
+
+    let rows = arr.length;
+    let cols = arr[0].length;
+
+    return [rows, cols];
+
+}
+
+function addBias(arr, bias) {
+
+    let rows = arr.length;
+    let cols = arr[0].length;
+
+    let result = [];
+
+    for(let i = 0; i < rows; i++) {
+
+        result[i] = [];
+
+        for(let j = 0; j < cols; j++) {
+
+            result[i][j] = arr[i][j] + bias[i][0];
+
+        }
+
+    }
+
+    return result;
+
 
 }
 
@@ -69,7 +129,7 @@ class NeuralNet {
         this.h2 = h2;
         this.o = o;
 
-        const range = [-0.5, 0.5]
+        const range = [-1, 1]
 
 
         this.W1 = new Matrix(h1, i).randomize(...range);
@@ -102,34 +162,36 @@ class NeuralNet {
 
     ReLU(x) {
             
-        // return x.map(row => row.map(col => Math.max(0, col)));
-        return x;
+        return x.map(row => row.map(col => Math.max(0, col)));
     
     }
 
     forward(input) {
 
 
-        this.input = numbers.matrix.transpose(input);
+        this.input = numbers.matrix.transpose([...input]);
 
-        this.z1 = numbers.matrix.addition(numbers.matrix.multiply(this.W1.data, this.input), this.b1.data);
+
+
+        this.z1 = addBias(numbers.matrix.multiply(this.W1.data, this.input), this.b1.data);
+        
         this.a1 = this.ReLU(this.z1);
 
         if(this.h2) {
-            this.z2 = numbers.matrix.addition(numbers.matrix.multiply(this.W2.data, this.a1), this.b2.data);
+            this.z2 = addBias(numbers.matrix.multiply(this.W2.data, this.a1), this.b2.data);
             this.a2 = this.ReLU(this.z2);
-            this.z3 = numbers.matrix.addition(numbers.matrix.multiply(this.W3.data, this.a2), this.b3.data);
+            this.z3 = addBias(numbers.matrix.multiply(this.W3.data, this.a2), this.b3.data);
             this.output = this.sigmoid(this.z3);
 
         }
         else {
 
-            this.z2 = numbers.matrix.addition(numbers.matrix.multiply(this.W2.data, this.a1), this.b2.data);
+            this.z2 = addBias(numbers.matrix.multiply(this.W2.data, this.a1), this.b2.data);
             this.output = this.sigmoid(this.z2);
 
         }
 
-        return this.output;
+        return numbers.matrix.transpose(this.output);
     }
 
     mutate(mutationRate) {
@@ -153,25 +215,23 @@ class NeuralNet {
 
         let net = new NeuralNet(this.i, this.h1, this.h2, this.o);
 
-        net.W1 = this.W1;
-        net.b1 = this.b1;
-        net.W2 = this.W2;
-        net.b2 = this.b2;
-        net.W3 = this.W3;
-        net.b3 = this.b3;
+        net.W1 = this.W1.clone();
+        net.b1 = this.b1.clone();
+        net.W2 = this.W2.clone();
+        net.b2 = this.b2.clone();
+        if(this.h2) {
+            net.W3 = this.W3.clone();
+            net.b3 = this.b3.clone();
+        }
 
         return net;
 
     }
 
+    isEqual(net) {
+
+        return this.W1.data === net.W1.data && this.b1.data === net.b1.data && this.W2.data === net.W2.data && this.b2.data === net.b2.data && this.W3.data === net.W3.data && this.b3.data === net.b3.data;
+
+    }
+
 }
-
-const net = new NeuralNet(2, 4, 4, 1);
-
-const input = [[0, 1]];
-
-console.log(net.forward(input));
-
-const net2 = net.clone().mutate(0.1);
-
-console.log(net2.forward(input));

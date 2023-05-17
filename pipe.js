@@ -17,7 +17,7 @@ class Pipe {
 
         this.spd = (2/400)*this.screenWidth;
 
-        this.gap = (Math.random()*0.15 + 0.15) * this.screenHeight;
+        this.gap = (Math.random()*0.2 + 0.2) * this.screenHeight;
 
         this.topRectPos = new Vector2D(this.pos.x, 0);
         this.topRectDims = new Vector2D(this.width, this.pos.y-this.gap);
